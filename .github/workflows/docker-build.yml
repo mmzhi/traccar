@@ -1,4 +1,4 @@
-name: Build and Push Docker Image for Traccar
+name: Build Docker Image
 
 on:
   push:
@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 检出代码
-      - name: Checkout code
+      # 检出代码并拉取子模块
+      - name: Checkout code and submodules
         uses: actions/checkout@v3
+        with:
+          submodules: true  # 拉取子模块
 
       # 提取 Implementation-Version
       - name: Extract Implementation-Version
