@@ -1,0 +1,40 @@
+name: Build and Push Docker Image for Traccar
+
+on:
+  push:
+    branches:
+      - master-cn  # 触发构建的分支名称
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 提取 Implementation-Version
+      - name: Extract Implementation-Version
+        id: get_version
+        run: |
+          VERSION=$(./gradlew -q printImplementationVersion || echo "latest")
+          echo "VERSION=$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      # 登录 Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 构建 Docker 镜像
+      - name: Build Docker Image
+        run: |
+          docker build --build-arg TRACCAR_VERSION=${{ env.VERSION }} -t ${{ secrets.DOCKER_USERNAME }}/traccar:${{ env.VERSION }} .
+
+      # 推送 Docker 镜像到 Docker Hub
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/traccar:${{ env.VERSION }}

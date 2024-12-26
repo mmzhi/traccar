@@ -12,7 +12,8 @@ RUN cd traccar-web && npm install && npm run build
 # 使用已编译的server层镜像作为基础镜像
 FROM eclipse-temurin:17-jre
 
-ENV TRACCAR_VERSION 6.5
+ARG TRACCAR_VERSION
+ENV TRACCAR_VERSION=${TRACCAR_VERSION}
 
 WORKDIR /opt/traccar
 
