@@ -20,7 +20,7 @@ jobs:
       - name: Extract Implementation-Version
         id: get_version
         run: |
-          VERSION=$(./gradlew -q printImplementationVersion || echo "latest")
+          VERSION=$(grep 'Implementation-Version' build.gradle | sed 's/.*Implementation-Version": "\(.*\)",*/\1/' || echo "latest")
           echo "VERSION=$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
